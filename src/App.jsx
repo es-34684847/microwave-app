@@ -11,7 +11,7 @@ export default function App() {
 
   const [fromW, setFromW] = useState(600);
   const [toW, setToW] = useState(500);
-  const [input, setInput] = useState("300");
+  const [input, setInput] = useState("");
   const [showInstallModal, setShowInstallModal] = useState(false);
 
   const handleKeyPress = (key) => {
@@ -169,10 +169,13 @@ export default function App() {
     },
     adBox: {
       margin: "8px auto 0",
-      width: "300px",
+      width: "100%",          // ←広げる
+      maxWidth: "340px",     // ←少し余裕
       height: "160px",
-      overflow: "hidden",
-    },
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+     },
     resultBar: {
       position: "fixed",
       left: "50%",
