@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function App() {
   const wattOptions = [500, 600, 700, 800, 1000];
@@ -13,6 +13,39 @@ export default function App() {
   const [toW, setToW] = useState(500);
   const [input, setInput] = useState("");
   const [showInstallModal, setShowInstallModal] = useState(false);
+  const rakutenRef = useRef(null);
+
+  useEffect(() => {
+    if (!rakutenRef.current) return;
+
+    rakutenRef.current.innerHTML = "";
+
+    const config = document.createElement("script");
+    config.type = "text/javascript";
+    config.text = `
+      rakuten_design="slide";
+      rakuten_affiliateId="13df228e.3a2dba4f.13df228f.6f6c05da";
+      rakuten_items="ctsmatch";
+      rakuten_genreId="0";
+      rakuten_size="300x160";
+      rakuten_target="_blank";
+      rakuten_theme="gray";
+      rakuten_border="off";
+      rakuten_auto_mode="on";
+      rakuten_genre_title="off";
+      rakuten_recommend="on";
+      rakuten_ts="${Date.now()}";
+    `;
+
+    const widget = document.createElement("script");
+    widget.type = "text/javascript";
+    widget.src =
+      "https://xml.affiliate.rakuten.co.jp/widget/js/rakuten_widget.js?20230106";
+    widget.async = true;
+
+    rakutenRef.current.appendChild(config);
+    rakutenRef.current.appendChild(widget);
+  }, []);
 
   const handleKeyPress = (key) => {
     if (key === "C") {
@@ -202,16 +235,12 @@ export default function App() {
     },
     adBox: {
       margin: "10px auto 0",
-      maxWidth: "360px",
-      minHeight: "44px",
-      borderRadius: "12px",
-      border: "1px dashed #d0d0d0",
-      backgroundColor: "#fff",
-      color: "#999",
-      fontSize: "12px",
+      maxWidth: "320px",
+      minHeight: "160px",
+      overflow: "hidden",
       display: "flex",
-      alignItems: "center",
       justifyContent: "center",
+      alignItems: "center",
     },
     resultBar: {
       position: "fixed",
@@ -375,9 +404,7 @@ export default function App() {
             ホーム画面に追加する方法
           </button>
 
-          <div style={styles.adBox}>
-          <script type="text/javascript">rakuten_design="slide";rakuten_affiliateId="13df228e.3a2dba4f.13df228f.6f6c05da";rakuten_items="ctsmatch";rakuten_genreId="0";rakuten_size="300x160";rakuten_target="_blank";rakuten_theme="gray";rakuten_border="off";rakuten_auto_mode="on";rakuten_genre_title="off";rakuten_recommend="on";rakuten_ts="1777333896429";</script><script type="text/javascript" src="https://xml.affiliate.rakuten.co.jp/widget/js/rakuten_widget.js?20230106"></script>
-          </div>
+          <div style={styles.adBox} ref={rakutenRef}></div>
         </div>
 
         <div style={styles.resultBar}>
@@ -400,16 +427,12 @@ export default function App() {
 
               <div style={styles.modalSection}>
                 <div style={styles.modalLabel}>iPhone</div>
-                <div>
-                  Safariで開く → 共有ボタン → ホーム画面に追加 → 追加
-                </div>
+                <div>Safariで開く → 共有ボタン → ホーム画面に追加 → 追加</div>
               </div>
 
               <div style={styles.modalSection}>
                 <div style={styles.modalLabel}>Android</div>
-                <div>
-                  Chromeで開く → 右上の︙ → ホーム画面に追加 → 追加
-                </div>
+                <div>Chromeで開く → 右上の︙ → ホーム画面に追加 → 追加</div>
               </div>
 
               <button
