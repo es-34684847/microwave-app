@@ -1,0 +1,9 @@
+🔥 更新の流れ（超シンプル）
+
+① コード直す（App.jsxいじる）
+② 保存
+③ ターミナルで👇
+
+git add .
+git commit -m "update"
+git push
