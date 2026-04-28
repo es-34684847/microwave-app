@@ -11,7 +11,7 @@ export default function App() {
 
   const [fromW, setFromW] = useState(600);
   const [toW, setToW] = useState(500);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState("300");
   const [showInstallModal, setShowInstallModal] = useState(false);
 
   const handleKeyPress = (key) => {
@@ -33,151 +33,340 @@ export default function App() {
     let seconds = num % 100;
 
     minutes += Math.floor(seconds / 60);
-    seconds %= 60;
+    seconds = seconds % 60;
 
-    return {
-      minutes,
-      seconds,
-      totalSeconds: minutes * 60 + seconds,
-    };
+    return { minutes, seconds, totalSeconds: minutes * 60 + seconds };
   };
 
-  const formatTime = (m, s) => `${m}分${String(s).padStart(2, "0")}秒`;
+  const formatTime = (minutes, seconds) =>
+    `${minutes}分${String(seconds).padStart(2, "0")}秒`;
 
   const inputTime = useMemo(() => parseInputToTime(input), [input]);
-
-  const convertedTime = useMemo(() => {
-    const raw =
-      inputTime.totalSeconds === 0
-        ? 0
-        : Math.floor(inputTime.totalSeconds * (fromW / toW));
-
-    // 👑 10秒刻み切り下げ
-    const rounded = Math.floor(raw / 10) * 10;
-
-    return {
-      minutes: Math.floor(rounded / 60),
-      seconds: rounded % 60,
-    };
-  }, [inputTime, fromW, toW]);
 
   const displayInput = input
     ? `${inputTime.minutes}:${String(inputTime.seconds).padStart(2, "0")}`
     : "0:00";
 
+  const convertedTime = useMemo(() => {
+    const rawSeconds =
+      inputTime.totalSeconds === 0
+        ? 0
+        : Math.floor(inputTime.totalSeconds * (fromW / toW));
+
+    const roundedSeconds = Math.floor(rawSeconds / 10) * 10;
+
+    return {
+      minutes: Math.floor(roundedSeconds / 60),
+      seconds: roundedSeconds % 60,
+    };
+  }, [inputTime, fromW, toW]);
+
+  const styles = {
+    page: {
+      minHeight: "100vh",
+      backgroundColor: "#f3f3f3",
+      fontFamily:
+        "'Hiragino Sans', 'Yu Gothic', 'Meiryo', system-ui, sans-serif",
+      color: "#222",
+      display: "flex",
+      justifyContent: "center",
+    },
+    phone: {
+      width: "100%",
+      maxWidth: "480px",
+      minHeight: "100vh",
+      backgroundColor: "#f7f7f7",
+      position: "relative",
+      paddingBottom: "180px",
+      boxSizing: "border-box",
+    },
+    header: {
+      textAlign: "center",
+      fontSize: "20px",
+      fontWeight: 700,
+      padding: "18px 16px 14px",
+      borderBottom: "1px solid #e5e5e5",
+    },
+    section: {
+      padding: "18px 16px 0",
+    },
+    sectionTitle: {
+      textAlign: "center",
+      fontSize: "16px",
+      fontWeight: 700,
+      marginBottom: "12px",
+    },
+    wattRow: {
+      display: "grid",
+      gridTemplateColumns: "repeat(5, 1fr)",
+      gap: "8px",
+    },
+    wattButton: {
+      height: "44px",
+      borderRadius: "10px",
+      border: "1px solid #8d8d8d",
+      backgroundColor: "#fff",
+      fontSize: "14px",
+      fontWeight: 700,
+      cursor: "pointer",
+    },
+    wattButtonSelectedFrom: {
+      backgroundColor: "#f2b632",
+      border: "1px solid #c89622",
+    },
+    wattButtonSelectedTo: {
+      backgroundColor: "#3f8f4e",
+      border: "1px solid #2f6e3b",
+      color: "#fff",
+    },
+    timeBlock: {
+      textAlign: "center",
+      paddingTop: "4px",
+    },
+    mainTime: {
+      fontSize: "64px",
+      lineHeight: 1,
+      fontWeight: 500,
+      letterSpacing: "-0.03em",
+      marginBottom: "6px",
+    },
+    subTime: {
+      fontSize: "20px",
+      color: "#4a4a4a",
+    },
+    keypadWrap: {
+      width: "90%",
+      margin: "18px auto 0",
+      display: "grid",
+      gap: "10px",
+    },
+    keypadRow: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: "10px",
+    },
+    keyButton: {
+      height: "66px",
+      borderRadius: "12px",
+      border: "1px solid #9a9a9a",
+      backgroundColor: "#fdfdfd",
+      fontSize: "26px",
+      fontWeight: 500,
+      cursor: "pointer",
+    },
+    utilityArea: {
+      padding: "14px 16px 0",
+      textAlign: "center",
+    },
+    installLink: {
+      border: "none",
+      background: "transparent",
+      color: "#666",
+      fontSize: "13px",
+      textDecoration: "underline",
+      cursor: "pointer",
+      padding: "6px",
+    },
+    adBox: {
+      margin: "8px auto 0",
+      width: "300px",
+      height: "160px",
+      overflow: "hidden",
+    },
+    resultBar: {
+      position: "fixed",
+      left: "50%",
+      bottom: 0,
+      transform: "translateX(-50%)",
+      width: "100%",
+      maxWidth: "480px",
+      backgroundColor: "#fff",
+      borderTop: "1px solid #e3e3e3",
+      boxShadow: "0 -4px 16px rgba(0,0,0,0.06)",
+      padding: "14px 18px calc(14px + env(safe-area-inset-bottom))",
+      boxSizing: "border-box",
+      zIndex: 10,
+    },
+    resultBefore: {
+      fontSize: "18px",
+      color: "#555",
+      textAlign: "right",
+      marginBottom: "8px",
+    },
+    resultAfter: {
+      fontSize: "clamp(32px, 8vw, 46px)",
+      fontWeight: 800,
+      lineHeight: 1.1,
+      textAlign: "center",
+      color: "#2f7a3d",
+      letterSpacing: "-0.03em",
+    },
+    resultAfterSub: {
+      fontSize: "clamp(20px, 5vw, 28px)",
+      fontWeight: 700,
+    },
+    modalOverlay: {
+      position: "fixed",
+      inset: 0,
+      backgroundColor: "rgba(0,0,0,0.45)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      zIndex: 50,
+    },
+    modal: {
+      width: "100%",
+      maxWidth: "360px",
+      backgroundColor: "#fff",
+      borderRadius: "18px",
+      padding: "20px",
+      boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
+    },
+    closeButton: {
+      marginTop: "16px",
+      width: "100%",
+      height: "42px",
+      borderRadius: "10px",
+      border: "1px solid #999",
+      backgroundColor: "#f7f7f7",
+      fontSize: "14px",
+      fontWeight: 700,
+      cursor: "pointer",
+    },
+  };
+
   return (
-    <div style={{ maxWidth: 480, margin: "0 auto", paddingBottom: 180 }}>
-      <h2 style={{ textAlign: "center" }}>電子レンジ換算</h2>
+    <div style={styles.page}>
+      <div style={styles.phone}>
+        <div style={styles.header}>電子レンジ換算</div>
 
-      {/* 元W */}
-      <div>
-        {wattOptions.map((w) => (
-          <button key={w} onClick={() => setFromW(w)}>
-            {w}W
-          </button>
-        ))}
-      </div>
-
-      {/* 時間 */}
-      <div style={{ textAlign: "center", marginTop: 20 }}>
-        <div style={{ fontSize: 48 }}>{displayInput}</div>
-        <div>{formatTime(inputTime.minutes, inputTime.seconds)}</div>
-      </div>
-
-      {/* テンキー */}
-      <div style={{ width: "90%", margin: "20px auto" }}>
-        {keypadRows.map((row, i) => (
-          <div key={i} style={{ display: "flex", gap: 10 }}>
-            {row.map((k) => (
+        <section style={styles.section}>
+          <div style={styles.sectionTitle}>元のW数</div>
+          <div style={styles.wattRow}>
+            {wattOptions.map((w) => (
               <button
-                key={k}
-                onClick={() => handleKeyPress(k)}
-                style={{ flex: 1, height: 60 }}
+                key={`from-${w}`}
+                type="button"
+                onClick={() => setFromW(w)}
+                style={{
+                  ...styles.wattButton,
+                  ...(fromW === w ? styles.wattButtonSelectedFrom : {}),
+                }}
               >
-                {k}
+                {w}W
               </button>
             ))}
           </div>
-        ))}
-      </div>
+        </section>
 
-      {/* 変換先 */}
-      <div>
-        {wattOptions.map((w) => (
-          <button key={w} onClick={() => setToW(w)}>
-            {w}W
-          </button>
-        ))}
-      </div>
+        <section style={styles.section}>
+          <div style={styles.sectionTitle}>時間入力</div>
+          <div style={styles.timeBlock}>
+            <div style={styles.mainTime}>{displayInput}</div>
+            <div style={styles.subTime}>
+              → {formatTime(inputTime.minutes, inputTime.seconds)}
+            </div>
+          </div>
 
-      {/* 👑 ホーム追加 */}
-      <div style={{ textAlign: "center", marginTop: 16 }}>
-        <button onClick={() => setShowInstallModal(true)}>
-          ホーム画面に追加する方法
-        </button>
-      </div>
+          <div style={styles.keypadWrap}>
+            {keypadRows.map((row, rowIndex) => (
+              <div key={rowIndex} style={styles.keypadRow}>
+                {row.map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleKeyPress(key)}
+                    style={styles.keyButton}
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
 
-      {/* 👑 広告（ここにiframe） */}
-      <div style={{ textAlign: "center", marginTop: 10 }}>
-        <iframe
-          src="/rakuten.html"
-          title="楽天広告"
-          style={{
-            width: "300px",
-            height: "160px",
-            border: "none",
-            overflow: "hidden",
-          }}
-        />
-      </div>
+        <section style={styles.section}>
+          <div style={styles.sectionTitle}>変換先W数</div>
+          <div style={styles.wattRow}>
+            {wattOptions.map((w) => (
+              <button
+                key={`to-${w}`}
+                type="button"
+                onClick={() => setToW(w)}
+                style={{
+                  ...styles.wattButton,
+                  ...(toW === w ? styles.wattButtonSelectedTo : {}),
+                }}
+              >
+                {w}W
+              </button>
+            ))}
+          </div>
+        </section>
 
-      {/* 結果 */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: "#fff",
-          borderTop: "1px solid #ccc",
-          padding: 12,
-          textAlign: "center",
-        }}
-      >
-        <div style={{ textAlign: "right" }}>
-          {fromW}Wで{formatTime(inputTime.minutes, inputTime.seconds)}
-        </div>
-        <div style={{ fontSize: 28 }}>
-          {toW}Wなら {formatTime(convertedTime.minutes, convertedTime.seconds)}
-        </div>
-      </div>
-
-      {/* モーダル */}
-      {showInstallModal && (
-        <div
-          onClick={() => setShowInstallModal(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              margin: "100px auto",
-              padding: 20,
-              width: 300,
-            }}
-            onClick={(e) => e.stopPropagation()}
+        <div style={styles.utilityArea}>
+          <button
+            type="button"
+            style={styles.installLink}
+            onClick={() => setShowInstallModal(true)}
           >
-            <h3>ホーム画面に追加</h3>
-            <p>iPhone：共有 → ホーム画面に追加</p>
-            <p>Android：︙ → ホーム画面に追加</p>
-            <button onClick={() => setShowInstallModal(false)}>閉じる</button>
+            ホーム画面に追加する方法
+          </button>
+
+          <div style={styles.adBox}>
+            <iframe
+              src="/rakuten.html"
+              title="楽天広告"
+              style={{
+                width: "300px",
+                height: "160px",
+                border: "none",
+                overflow: "hidden",
+              }}
+            />
           </div>
         </div>
-      )}
+
+        <div style={styles.resultBar}>
+          <div style={styles.resultBefore}>
+            {fromW}Wで{formatTime(inputTime.minutes, inputTime.seconds)}
+          </div>
+          <div style={styles.resultAfter}>
+            {toW}W<span style={styles.resultAfterSub}>なら</span>{" "}
+            {formatTime(convertedTime.minutes, convertedTime.seconds)}
+          </div>
+        </div>
+
+        {showInstallModal && (
+          <div
+            style={styles.modalOverlay}
+            onClick={() => setShowInstallModal(false)}
+          >
+            <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <h3>ホーム画面に追加</h3>
+              <p>
+                <b>iPhone</b>
+                <br />
+                Safariで開く → 共有ボタン → ホーム画面に追加 → 追加
+              </p>
+              <p>
+                <b>Android</b>
+                <br />
+                Chromeで開く → 右上の︙ → ホーム画面に追加 → 追加
+              </p>
+              <button
+                type="button"
+                style={styles.closeButton}
+                onClick={() => setShowInstallModal(false)}
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
