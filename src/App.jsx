@@ -171,7 +171,7 @@ export default function App() {
       margin: "8px auto 0",
       width: "100%",          // ←広げる
       maxWidth: "340px",     // ←少し余裕
-      height: "160px",
+      height: "170px",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -323,8 +323,8 @@ export default function App() {
               src="/rakuten.html"
               title="楽天広告"
               style={{
-                width: "300px",
-                height: "160px",
+                width: "320px",
+                height: "170px",
                 border: "none",
                 overflow: "hidden",
               }}
