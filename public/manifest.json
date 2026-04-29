@@ -1,6 +1,6 @@
 {
-  "name": "電子レンジ換算",
-  "short_name": "レンジ換算",
+  "name": "電子レンジ ワット数計算",
+  "short_name": "レンジW数計算",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
